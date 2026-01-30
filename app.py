@@ -48,16 +48,18 @@ else:
             st.session_state['zalogowany'] = False
             st.rerun()
 
-    # --- LEKCJA 1 ---
+    # --- LEKCJA 1 (ZGODNIE Z PDF 1) ---
     if wybor == "Lekcja 1: Poznaję Siebie":
         st.title("🧩 Lekcja 1: Poznaję Siebie")
-        st.write("Wypełnij arkusz refleksji nad własnymi zasobami.")
+        st.subheader("POZNAJĘ SIEBIE // CO LUBIĘ? JAKIE MAM UMIEJĘTNOŚCI?")
         
         with st.form("form_lekcja1"):
-            st.subheader("Twoje Umiejętności")
+            st.markdown("### Twoje Umiejętności")
+            st.caption("Zastanów się, jakie masz umiejętności. Pomyśl o swoich zainteresowaniach, o tym w jakich tematach posiadasz wiedzę. Zaznacz wszystkie swoje umiejętności (nawet drobne).")
+            
             lista_umiejetnosci = [
                 "Szybkie podejmowanie decyzji", "Dotrzymywanie terminów", "Umiejętność improwizacji",
-                "Szybkie adaptowanie się do nowych warunków", "Słuchanie innych", "Organizowanie wydarzeń",
+                "Szybka adaptacja do nowych warunków", "Słuchanie innych", "Organizowanie wydarzeń",
                 "Szybkie uczenie się", "Przekazywanie wiedzy innym", "Inicjowanie działań",
                 "Logiczne myślenie", "Łatwość w nawiązywaniu kontaktów", "Przemawianie publiczne",
                 "Wytrwałe dążenie do celu", "Szybkie liczenie", "Uważne obserwowanie",
@@ -66,31 +68,54 @@ else:
             
             saved_skills = str(current_data['l1_umiejetnosci'])
             default_skills = [x.strip() for x in saved_skills.split(",")] if saved_skills != "nan" else []
-            odp_umiejetnosci = st.multiselect("Zaznacz swoje mocne strony:", lista_umiejetnosci, default=[x for x in default_skills if x in lista_umiejetnosci])
+            odp_umiejetnosci = st.multiselect("Wybierz z listy:", lista_umiejetnosci, default=[x for x in default_skills if x in lista_umiejetnosci])
             
-            c1, c2 = st.columns(2)
-            with c1:
-                st.write("**Co lubię w szkole?**")
-                val_fav = str(current_data['l1_ulubione']) if str(current_data['l1_ulubione']) != "nan" else ""
-                odp_ulubione = st.text_area("Ulubione przedmioty:", value=val_fav, key="txt_fav")
-            with c2:
-                st.write("**Czego nie lubię?**")
-                val_hate = str(current_data['l1_nielubiane']) if str(current_data['l1_nielubiane']) != "nan" else ""
-                odp_nielubiane = st.text_area("Nielubiane przedmioty:", value=val_hate, key="txt_hate")
+            st.divider()
+            
+            # Pytania dokładnie z pliku 1.pdf
+            q1 = "Jakie są Twoje ulubione przedmioty szkolne? Co Ci się w nich podoba?"
+            q2 = "Jakie przedmioty szkolne lubisz najmniej? Dlaczego?"
+            q3 = "Za co zwykle chwalą Cię inni? Z czego Ty sam(a) jesteś dumny/dumna?"
+            q4 = "Gdybyś nie musiał(a) się martwić o finanse, jak wyglądałaby Twoja wymarzona praca? Jak wyobrażasz sobie typowy dzień w takiej pracy?"
+            q5 = "Czego zupełnie nie lubisz robić? Jakiej pracy na pewno nie mógłbyś/mogłabyś wykonywać w przyszłości? Dlaczego?"
+            q6 = "Czego chciał(a)byś się nauczyć w ciągu najbliższych 5 lat? Umiejętności/wiedzę z jakiego obszaru pogłębić? (nie tylko w szkole, również na własną rękę)"
 
-            st.write("**Moje Cele**")
-            val_cele = str(current_data['l1_cele_5lat']) if str(current_data['l1_cele_5lat']) != "nan" else ""
-            odp_cele = st.text_input("Gdzie widzisz siebie za 5 lat?", value=val_cele)
+            st.write(f"**{q1}**")
+            val1 = str(current_data['l1_ulubione']) if str(current_data['l1_ulubione']) != "nan" else ""
+            odp1 = st.text_area("Twoja odpowiedź:", value=val1, key="q1", label_visibility="collapsed")
 
-            if st.form_submit_button("💾 Zapisz Lekcję 1"):
+            st.write(f"**{q2}**")
+            val2 = str(current_data['l1_nielubiane']) if str(current_data['l1_nielubiane']) != "nan" else ""
+            odp2 = st.text_area("Twoja odpowiedź:", value=val2, key="q2", label_visibility="collapsed")
+
+            st.write(f"**{q3}**")
+            val3 = str(current_data['l1_duma']) if str(current_data['l1_duma']) != "nan" else ""
+            odp3 = st.text_area("Twoja odpowiedź:", value=val3, key="q3", label_visibility="collapsed")
+
+            st.write(f"**{q4}**")
+            val4 = str(current_data['l1_finanse_ok']) if str(current_data['l1_finanse_ok']) != "nan" else ""
+            odp4 = st.text_area("Twoja odpowiedź:", value=val4, key="q4", label_visibility="collapsed")
+
+            st.write(f"**{q5}**")
+            val5 = str(current_data['l1_anty_praca']) if str(current_data['l1_anty_praca']) != "nan" else ""
+            odp5 = st.text_area("Twoja odpowiedź:", value=val5, key="q5", label_visibility="collapsed")
+
+            st.write(f"**{q6}**")
+            val6 = str(current_data['l1_cele_5lat']) if str(current_data['l1_cele_5lat']) != "nan" else ""
+            odp6 = st.text_area("Twoja odpowiedź:", value=val6, key="q6", label_visibility="collapsed")
+
+            if st.form_submit_button("💾 Zapisz moje refleksje"):
                 df.at[idx, 'l1_umiejetnosci'] = ",".join(odp_umiejetnosci)
-                df.at[idx, 'l1_ulubione'] = odp_ulubione
-                df.at[idx, 'l1_nielubiane'] = odp_nielubiane
-                df.at[idx, 'l1_cele_5lat'] = odp_cele
+                df.at[idx, 'l1_ulubione'] = odp1
+                df.at[idx, 'l1_nielubiane'] = odp2
+                df.at[idx, 'l1_duma'] = odp3
+                df.at[idx, 'l1_finanse_ok'] = odp4
+                df.at[idx, 'l1_anty_praca'] = odp5
+                df.at[idx, 'l1_cele_5lat'] = odp6
                 conn.update(data=df)
-                st.success("Dane z Lekcji 1 zostały zaktualizowane w Arkuszu Google!")
+                st.success("Wszystkie odpowiedzi z Lekcji 1 zostały zapisane!")
 
-    # --- LEKCJA 2 ---
+    # --- LEKCJA 2 (ZGODNIE Z TESTEM TEMPERAMENTU) ---
     elif wybor == "Lekcja 2: Test Temperamentu":
         st.title("⚖️ Lekcja 2: Temperament a zawód")
         st.write("Oceń stwierdzenia w skali 1-5 (1: Zdecydowanie nie, 5: Zdecydowanie tak).")
@@ -118,24 +143,21 @@ else:
             
             st.divider()
             ref_val = str(current_data['l2_opis']) if 'l2_opis' in df.columns and str(current_data['l2_opis']) != "nan" else ""
-            refleksja = st.text_area("Moje wnioski po wykonaniu testu:", value=ref_val)
+            refleksja = st.text_area("Twoje wnioski po teście temperamentu:", value=ref_val)
             
             if st.form_submit_button("🚀 Oblicz i Zapisz Wyniki"):
                 df.at[idx, 'l2_sangwinik'] = wyniki["S"]
                 df.at[idx, 'l2_choleryk'] = wyniki["C"]
                 df.at[idx, 'l2_melancholik'] = wyniki["M"]
                 df.at[idx, 'l2_flegmatyk'] = wyniki["F"]
-                if 'l2_opis' in df.columns:
-                    df.at[idx, 'l2_opis'] = refleksja
+                df.at[idx, 'l2_opis'] = refleksja
                 
                 conn.update(data=df)
                 
-                # Wyświetlenie wyniku
                 max_typ = max(wyniki, key=wyniki.get)
                 mapa_typow = {"S": "SANGWINIK", "C": "CHOLERYK", "M": "MELANCHOLIK", "F": "FLEGMATYK"}
-                st.success(f"Wyniki zapisane! Twój dominujący typ to: {mapa_typow[max_typ]}")
+                st.success(f"Wyniki zapisane! Dominujący typ: {mapa_typow[max_typ]}")
                 
-                # Wykres słupkowy dla ucznia
                 wyniki_df = pd.DataFrame({
                     'Typ': ['Sangwinik', 'Choleryk', 'Melancholik', 'Flegmatyk'],
                     'Punkty': [wyniki["S"], wyniki["C"], wyniki["M"], wyniki["F"]]
