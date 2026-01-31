@@ -4,7 +4,12 @@ import pandas as pd
 
 # --- KONFIGURACJA STRONY ---
 st.set_page_config(page_title="Cyfrowy Doradca Zawodowy", layout="wide")
-conn = st.connection("gsheets", type=GSheetsConnection)
+
+# Poprawka formatowania klucza w locie - to rozwiązuje błąd ValueError
+conf = st.secrets["connections"]["gsheets"].to_dict()
+conf["private_key"] = conf["private_key"].replace("\\n", "\n")
+
+conn = st.connection("gsheets", type=GSheetsConnection, **conf)
 
 def get_data():
     return conn.read(ttl=0)
@@ -79,6 +84,7 @@ else:
     # --- LEKCJA 2 ---
     elif wybor == "Lekcja 2: Mój Temperament":
         st.title("⚖️ Lekcja 2: Temperament a zawód")
+        
         with st.form("form_wyniki_temp"):
             c1, c2, c3, c4 = st.columns(4)
             with c1: s_pkt = st.number_input("SANGWINIK", min_value=0, value=int(current_data['l2_sangwinik']) if not pd.isna(current_data['l2_sangwinik']) else 0)
