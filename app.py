@@ -4,9 +4,7 @@ import pandas as pd
 
 # --- KONFIGURACJA STRONY ---
 st.set_page_config(page_title="Cyfrowy Doradca Zawodowy", layout="wide")
-# Naprawiamy formatowanie klucza w locie
-if "gsheets" in st.secrets["connections"]:
-    st.secrets.connections.gsheets.private_key = st.secrets.connections.gsheets.private_key.replace("\\n", "\n")
+conn = st.connection("gsheets", type=GSheetsConnection)
 
 conn = st.connection("gsheets", type=GSheetsConnection)
 
