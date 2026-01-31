@@ -5,11 +5,8 @@ import pandas as pd
 # --- KONFIGURACJA STRONY ---
 st.set_page_config(page_title="Cyfrowy Doradca Zawodowy", layout="wide")
 
-# Poprawka formatowania klucza w locie - to rozwiązuje błąd ValueError
-conf = st.secrets["connections"]["gsheets"].to_dict()
-conf["private_key"] = conf["private_key"].replace("\\n", "\n")
-
-conn = st.connection("gsheets", type=GSheetsConnection, **conf)
+# Standardowe nawiązanie połączenia - Streamlit sam odczyta dane z Secrets
+conn = st.connection("gsheets", type=GSheetsConnection)
 
 def get_data():
     return conn.read(ttl=0)
@@ -53,7 +50,7 @@ else:
     # --- LEKCJA 1 ---
     if wybor == "Lekcja 1: Poznaję Siebie":
         st.title("🧩 Lekcja 1: Poznaję Siebie")
-        st.subheader("POZNAJĘ SIEBIE // CO LUBIĘ? JAKIE MAM UMIEJĘTNOŚCI?")
+        st.subheader("CO LUBIĘ? JAKIE MAM UMIEJĘTNOŚCI?")
         
         with st.form("form_lekcja1"):
             st.markdown("### Twoje Umiejętności")
