@@ -5,8 +5,13 @@ import pandas as pd
 # --- KONFIGURACJA STRONY ---
 st.set_page_config(page_title="Cyfrowy Doradca Zawodowy", layout="wide")
 
-# Standardowe nawiązanie połączenia - Streamlit sam odczyta dane z Secrets
-conn = st.connection("gsheets", type=GSheetsConnection)
+# AUTOMATYCZNA NAPRAWA KLUCZA (To eliminuje ValueError)
+conf = st.secrets["connections"]["gsheets"].to_dict()
+if "private_key" in conf:
+    conf["private_key"] = conf["private_key"].replace("\\n", "\n")
+
+# Nawiązanie połączenia z użyciem poprawionej konfiguracji
+conn = st.connection("gsheets", type=GSheetsConnection, **conf)
 
 def get_data():
     return conn.read(ttl=0)
@@ -50,7 +55,7 @@ else:
     # --- LEKCJA 1 ---
     if wybor == "Lekcja 1: Poznaję Siebie":
         st.title("🧩 Lekcja 1: Poznaję Siebie")
-        st.subheader("CO LUBIĘ? JAKIE MAM UMIEJĘTNOŚCI?")
+        st.subheader("POZNAJĘ SIEBIE // CO LUBIĘ? JAKIE MAM UMIEJĘTNOŚCI?")
         
         with st.form("form_lekcja1"):
             st.markdown("### Twoje Umiejętności")
@@ -76,7 +81,7 @@ else:
                 df.at[idx, 'l1_ulubione'] = odp1
                 df.at[idx, 'l1_nielubiane'] = odp2
                 conn.update(data=df)
-                st.success("Zapisano dane.")
+                st.success("Zapisano!")
 
     # --- LEKCJA 2 ---
     elif wybor == "Lekcja 2: Mój Temperament":
@@ -95,6 +100,6 @@ else:
                 df.at[idx, 'l2_melancholik'] = m_pkt
                 df.at[idx, 'l2_flegmatyk'] = f_pkt
                 conn.update(data=df)
-                st.success("Wyniki zapisane!")
+                st.success("Zapisano!")
                 chart_data = pd.DataFrame({'Typ': ['S', 'C', 'M', 'F'], 'Punkty': [s_pkt, c_pkt, m_pkt, f_pkt]})
                 st.bar_chart(chart_data.set_index('Typ'))
